@@ -1,0 +1,376 @@
+@model CCSMonitoringSystem.Models.Student
+@{
+    ViewData["Title"] = "Login";
+}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --accent:    #7c5cfc;
+    --accent2:   #e040c8;
+    --text:      #f0f0f8;
+    --muted:     #7a7a9a;
+    --danger:    #ff4d6d;
+    --success:   #34d399;
+  }
+
+  html, body {
+    height: 100%;
+    background: linear-gradient(135deg, #0055cc 0%, #003a99 50%, #001a66 100%);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ── Navbar ── */
+  .ccs-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 2rem;
+    height: auto;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+  }
+  .ccs-nav .brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #003a99;
+    letter-spacing: 0.01em;
+  }
+  .ccs-nav .brand span { color: #0055cc; }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+  .nav-links a {
+    color: #333;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a:hover { color: #0055cc; }
+  .nav-links a.active { color: #0055cc; }
+  .nav-links a.btn-nav {
+    background: var(--accent);
+    color: #fff;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  .nav-links a.btn-nav:hover { background: #6a4de0; }
+
+  /* ── Page layout ── */
+  .page-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    margin-top: 60px;
+
+  }
+  .inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  /* ── Left panel hidden ── */
+  .left-panel { display: none; }
+
+  /* ── Card ── */
+  .login-card {
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    animation: slideUp 0.5s ease-out both;
+  }
+  
+  @@keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .card-heading {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    color: #333;
+    height:60px;
+  }
+  .card-heading strong {
+    color: var(--accent);
+  }
+
+  .card-sub {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1.75rem;
+  }
+
+  /* ── Inputs ── */
+  .field-group { margin-bottom: 1.5rem; }
+  .field-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .input-wrap .ico {
+    position: absolute;
+    left: 1rem;
+    color: #999;
+    font-size: 1.1rem;
+    pointer-events: none;
+  }
+  .input-wrap input {
+    width: 100%;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    color: #333;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.85rem 1rem 0.85rem 2.75rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .input-wrap input::placeholder { 
+    color: #aaa; 
+  }
+  .input-wrap input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.1);
+    background: #fff;
+  }
+
+  /* ── Remember & forgot ── */
+  .meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+  }
+  .remember-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+    cursor: pointer;
+  }
+  .remember-label input[type="checkbox"] {
+    accent-color: var(--accent);
+    width: 16px; 
+    height: 16px;
+    cursor: pointer;
+  }
+  .forgot-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .forgot-link:hover { color: var(--accent2); }
+
+  /* ── Submit button ── */
+  .btn-login {
+    width: 100%;
+    padding: 0.95rem;
+    background: linear-gradient(135deg, #0055cc, var(--accent));
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(0, 85, 204, 0.3);
+  }
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 85, 204, 0.4);
+  }
+  .btn-login:active { transform: translateY(0); }
+
+  /* shimmer */
+  .btn-login::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+  }
+  .btn-login:hover::after { transform: translateX(100%); }
+
+  /* ── Alerts ── */
+  .alert-success-dark {
+    background: rgba(52, 211, 153, 0.1);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    color: var(--success);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.875rem;
+    margin-bottom: 1.25rem;
+  }
+  .alert-danger-dark {
+    background: rgba(255, 77, 109, 0.1);
+    border: 1px solid rgba(255, 77, 109, 0.3);
+    color: var(--danger);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.875rem;
+    margin-top: 1rem;
+  }
+
+  /* ── Footer link ── */
+  .signup-prompt {
+    text-align: center;
+    margin-top: 1.75rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  .signup-prompt a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .signup-prompt a:hover { color: var(--accent2); }
+
+  /* ── Footer bar ── */
+  .footer-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(0, 30, 60, 0.95);
+    text-align: center;
+    padding: 0.75rem;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* ── Responsive ── */
+  @@media (max-width: 768px) {
+    .page-wrap { padding: 1.5rem 1rem; }
+    .login-card { padding: 2rem 1.5rem; }
+    .card-heading { font-size: 1.75rem; }
+    .nav-links { gap: 1.5rem; }
+  }
+</style>
+
+<!-- Navbar -->
+<nav class="ccs-nav">
+  <div class="brand"><span>CCS</span> Monitoring System</div>
+  <div class="nav-links">
+    <a href="/Student/Index" class="active">Login</a>
+    <a href="/Student/Register" class="btn-nav">Register</a>
+  </div>
+</nav>
+
+<!-- Main content -->
+<div class="page-wrap">
+  <div class="inner">
+    <!-- Login card -->
+    <div class="login-card">
+      <div class="card-heading">Sign <strong>In</strong></div>
+      <div class="card-sub">Sign in to your student account</div>
+
+      @if (TempData["Success"] != null)
+      {
+        <div class="alert-success-dark">✓ @TempData["Success"]</div>
+      }
+
+      <form asp-action="Login" method="post">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="All" class="alert-danger-dark" style="display:none;"></div>
+
+        <div class="field-group">
+          <label class="field-label">ID Number</label>
+          <div class="input-wrap">
+            <span class="ico">🪪</span>
+            <input asp-for="IdNumber" placeholder="e.g. 23-xxx-xxx" autocomplete="username" />
+          </div>
+          <span asp-validation-for="IdNumber" style="display:block; margin-top:0.3rem; color: var(--danger); font-size: 0.875rem;"></span>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Password</label>
+          <div class="input-wrap">
+            <span class="ico">🔒</span>
+            <input asp-for="Password" type="password" placeholder="Enter your password" autocomplete="current-password" />
+          </div>
+          <span asp-validation-for="Password" style="display:block; margin-top:0.3rem; color: var(--danger); font-size: 0.875rem;"></span>
+        </div>
+
+        <div class="meta-row">
+          <label class="remember-label">
+            <input type="checkbox" asp-for="RememberMe" />
+            Remember me
+          </label>
+          <a href="#" class="forgot-link">⚠ Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-login">🔐 Sign In</button>
+
+        @if (ViewBag.Error != null)
+        {
+          <div class="alert-danger-dark">⚠ @ViewBag.Error</div>
+        }
+      </form>
+
+      <div class="signup-prompt">
+        Don't have an account? <a href="/Student/Register">Register</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer-bar">© 2024 College of Computer Studies &mdash; University of Cebu</div>

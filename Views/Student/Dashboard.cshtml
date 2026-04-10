@@ -1,0 +1,899 @@
+@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f5f5f5;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 30px 20px;
+        color: white;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+
+    .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 40px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .sidebar-logo i {
+        font-size: 1.8rem;
+    }
+
+    .sidebar-menu {
+        list-style: none;
+    }
+
+    .sidebar-menu li {
+        margin-bottom: 15px;
+    }
+
+    .sidebar-menu a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        padding-left: 20px;
+    }
+
+    .sidebar-menu i {
+        width: 20px;
+        text-align: center;
+    }
+
+    /* ── Header ── */
+    .top-header {
+        position: fixed;
+        top: 0;
+        left: 250px;
+        right: 0;
+        height: 70px;
+        background: white;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        z-index: 999;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-title h1 {
+        font-size: 1.8rem;
+        color: #333;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .notification-badge {
+        position: relative;
+        cursor: pointer;
+        font-size: 1.3rem;
+        color: #667eea;
+    }
+
+    .notification-badge .badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ef4444;
+    }
+
+    .btn-logout {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-logout:hover {
+        background-color: #c82333;
+        text-decoration: none;
+        color: white;
+    }
+
+    /* ── Main Content ── */
+    .main-content {
+        margin-left: 250px;
+        margin-top: 70px;
+        padding: 30px;
+        min-height: calc(100vh - 70px);
+    }
+
+    /* ── Stats Cards ── */
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border-left: 5px solid;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-card-1 { border-left-color: #667eea; }
+    .stat-card-2 { border-left-color: #10b981; }
+    .stat-card-3 { border-left-color: #f59e0b; }
+    .stat-card-4 { border-left-color: #ef4444; }
+
+    .stat-card h6 {
+        color: #999;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+    }
+
+    .stat-card h2 {
+        color: #333;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .stat-card p {
+        color: #999;
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+
+    /* ── Content Cards ── */
+    .content-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 25px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: white;
+        border-bottom: 2px solid #f0f0f0;
+        padding: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .card-header h5 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 25px;
+    }
+
+    /* ── Buttons ── */
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        text-decoration: none;
+        color: white;
+    }
+
+    .btn-primary-action {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .btn-primary-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    /* ── Announcements ── */
+    .announcement-item {
+        padding: 15px;
+        border-left: 4px solid #667eea;
+        background: #f8f9fa;
+        border-radius: 6px;
+        margin-bottom: 15px;
+    }
+
+    .announcement-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .announcement-date {
+        font-size: 0.85rem;
+        color: #999;
+    }
+
+    .announcement-content {
+        color: #666;
+        margin-top: 8px;
+        font-size: 0.95rem;
+    }
+
+    /* ── Rules Card ── */
+    .rule-item {
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        gap: 15px;
+    }
+
+    .rule-item:last-child {
+        border-bottom: none;
+    }
+
+    .rule-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: #667eea;
+        color: white;
+        border-radius: 50%;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .rule-content h6 {
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .rule-content p {
+        color: #666;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    /* ── History/Reservation Table ── */
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .table-custom {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+    .table-custom thead {
+        background-color: #f8f9fa;
+    }
+
+    .table-custom thead th {
+        color: #666;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 15px;
+        border: none;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .table-custom tbody td {
+        padding: 15px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+    }
+
+    .table-custom tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .badge-custom {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .badge-warning {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+
+    /* ── Rewards/Points ── */
+    .reward-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        justify-content: space-between;
+    }
+
+    .reward-info h6 {
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
+
+    .reward-info p {
+        color: #999;
+        font-size: 0.85rem;
+        margin: 0;
+    }
+
+    .reward-points {
+        background: #667eea;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: 700;
+    }
+
+    /* ── Modal ── */
+    .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .form-control,
+    .form-select {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 10px 12px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* ── Responsive ── */
+</style>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <i class="fas fa-graduation-cap"></i>
+        <span>CCS Student</span>
+    </div>
+    <ul class="sidebar-menu">
+        <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="#profile-section"><i class="fas fa-user"></i> My Profile</a></li>
+        <li><a href="#session-section"><i class="fas fa-hourglass-end"></i> Remaining Session</a></li>
+        <li><a href="#announcements-section"><i class="fas fa-bell"></i> Announcements</a></li>
+        <li><a href="#rules-section"><i class="fas fa-book"></i> Rules & Regulations</a></li>
+        <li><a href="#history-section"><i class="fas fa-history"></i> Sit-in History</a></li>
+        <li><a href="#reservation-section"><i class="fas fa-calendar-check"></i> Reservation</a></li>
+        <li><a href="#rewards-section"><i class="fas fa-trophy"></i> My Rewards</a></li>
+        <li style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px; padding-top: 20px;">
+            <a href="/Student/Index"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </li>
+    </ul>
+</aside>
+
+<!-- Header -->
+<header class="top-header">
+    <div class="header-title">
+        <h1><i class="fas fa-chart-line"></i> My Dashboard</h1>
+    </div>
+    <div class="header-actions">
+        <div class="notification-badge">
+            <i class="fas fa-bell"></i>
+            <span class="badge rounded-pill badge-danger">3</span>
+        </div>
+        <span style="color: #666;">Welcome, @ViewBag.StudentName!</span>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Statistics Cards -->
+    <div class="stats-container">
+        <div class="stat-card stat-card-1">
+            <h6>Remaining Sessions</h6>
+            <h2 id="remainingSession">27</h2>
+            <p>Out of 40 sessions</p>
+        </div>
+        <div class="stat-card stat-card-2">
+            <h6>Total Sit-Ins</h6>
+            <h2>13</h2>
+            <p>This semester</p>
+        </div>
+        <div class="stat-card stat-card-3">
+            <h6>Pending Reservations</h6>
+            <h2>2</h2>
+            <p>Awaiting approval</p>
+        </div>
+        <div class="stat-card stat-card-4">
+            <h6>Reward Points</h6>
+            <h2>450</h2>
+            <p>Total earned</p>
+        </div>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="content-card" id="profile-section">
+        <div class="card-header">
+            <h5><i class="fas fa-user"></i> My Profile</h5>
+            <button class="btn-action btn-primary-action" style="margin: 0;" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                <i class="fas fa-edit"></i> Edit Profile
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 text-center mb-3">
+                    <div style="width: 150px; height: 150px; background: #667eea; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">ID Number</label>
+                            <p>23-12345</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name</label>
+                            <p>@ViewBag.StudentName</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <p>student@university.edu</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Course</label>
+                            <p>Bachelor of Science in Computer Science</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Course Level</label>
+                            <p>2nd Year</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Address</label>
+                            <p>123 Main Street, City</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcements Section -->
+    <div class="content-card" id="announcements-section">
+        <div class="card-header">
+            <h5><i class="fas fa-megaphone"></i> Latest Announcements</h5>
+        </div>
+        <div class="card-body">
+            <div class="announcement-item">
+                <div class="announcement-title"><i class="fas fa-info-circle"></i> System Maintenance Notice</div>
+                <div class="announcement-date">Posted on: 2024-Feb-11</div>
+                <div class="announcement-content">The monitoring system will undergo maintenance on February 15th. Please plan your sit-ins accordingly.</div>
+            </div>
+
+            <div class="announcement-item">
+                <div class="announcement-title"><i class="fas fa-star"></i> Reward Points Available</div>
+                <div class="announcement-date">Posted on: 2024-Feb-10</div>
+                <div class="announcement-content">Bonus reward points are available for early morning sit-ins (6 AM - 8 AM). Double points awarded!</div>
+            </div>
+
+            <div class="announcement-item">
+                <div class="announcement-title"><i class="fas fa-exclamation-triangle"></i> New Lab Policy</div>
+                <div class="announcement-date">Posted on: 2024-Feb-08</div>
+                <div class="announcement-content">All lab reservations must now be made 24 hours in advance. Please update your booking procedures accordingly.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rules Section -->
+    <div class="content-card" id="rules-section">
+        <div class="card-header">
+            <h5><i class="fas fa-book"></i> Lab Sit-In Rules & Regulations</h5>
+        </div>
+        <div class="card-body">
+            <div class="rule-item">
+                <div class="rule-number">1</div>
+                <div class="rule-content">
+                    <h6>Attendance Requirement</h6>
+                    <p>Students must log in and out using the system. Unauthorized absence may result in penalties.</p>
+                </div>
+            </div>
+
+            <div class="rule-item">
+                <div class="rule-number">2</div>
+                <div class="rule-content">
+                    <h6>Lab Equipment</h6>
+                    <p>Treat all lab equipment with care. Report any damages immediately to the lab supervisor.</p>
+                </div>
+            </div>
+
+            <div class="rule-item">
+                <div class="rule-number">3</div>
+                <div class="rule-content">
+                    <h6>Dress Code</h6>
+                    <p>Business casual or formal wear is required. No shorts, sleeveless shirts, or flip-flops allowed.</p>
+                </div>
+            </div>
+
+            <div class="rule-item">
+                <div class="rule-number">4</div>
+                <div class="rule-content">
+                    <h6>Conduct Policy</h6>
+                    <p>Maintain professional behavior. No loud conversations, eating, or distractions are permitted.</p>
+                </div>
+            </div>
+
+            <div class="rule-item">
+                <div class="rule-number">5</div>
+                <div class="rule-content">
+                    <h6>Minimum Duration</h6>
+                    <p>Each sit-in session must be at least 2 hours. Early sign-outs may not be credited.</p>
+                </div>
+            </div>
+
+            <div class="rule-item">
+                <div class="rule-number">6</div>
+                <div class="rule-content">
+                    <h6>Cancellation Policy</h6>
+                    <p>Reservations must be cancelled at least 12 hours before the scheduled time to avoid penalties.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Sit-in History -->
+        <div class="col-lg-6">
+            <div class="content-card" id="history-section">
+                <div class="card-header">
+                    <h5><i class="fas fa-history"></i> Recent Sit-In History</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-wrapper">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Duration</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2024-02-10</td>
+                                    <td>10:00 AM - 1:00 PM</td>
+                                    <td>3 hours</td>
+                                    <td><span class="badge-custom badge-success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-02-09</td>
+                                    <td>2:00 PM - 5:00 PM</td>
+                                    <td>3 hours</td>
+                                    <td><span class="badge-custom badge-success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-02-08</td>
+                                    <td>9:00 AM - 12:00 PM</td>
+                                    <td>3 hours</td>
+                                    <td><span class="badge-custom badge-success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-02-07</td>
+                                    <td>3:00 PM - 6:00 PM</td>
+                                    <td>3 hours</td>
+                                    <td><span class="badge-custom badge-success">Completed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservations -->
+        <div class="col-lg-6">
+            <div class="content-card" id="reservation-section">
+                <div class="card-header">
+                    <h5><i class="fas fa-calendar-check"></i> My Reservations</h5>
+                    <button class="btn-action btn-primary-action" style="margin: 0;" data-bs-toggle="modal" data-bs-target="#makeReservationModal">
+                        <i class="fas fa-plus"></i> New Reservation
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-wrapper">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Lab</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2024-02-15</td>
+                                    <td>10:00 AM - 1:00 PM</td>
+                                    <td>Lab 524</td>
+                                    <td><span class="badge-custom badge-info">Approved</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-02-16</td>
+                                    <td>2:00 PM - 5:00 PM</td>
+                                    <td>Lab 525</td>
+                                    <td><span class="badge-custom badge-warning">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: #999; padding: 20px;">No more reservations</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rewards Section -->
+    <div class="content-card" id="rewards-section">
+        <div class="card-header">
+            <h5><i class="fas fa-trophy"></i> My Rewards & Points</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6 style="color: #999; margin-bottom: 10px;">Total Points</h6>
+                    <div style="font-size: 2.5rem; color: #667eea; font-weight: 700;">450 <span style="font-size: 1.2rem;"> pts</span></div>
+                </div>
+                <div class="col-md-6">
+                    <h6 style="color: #999; margin-bottom: 10px;">Current Tier</h6>
+                    <div style="font-size: 2.5rem; color: #f59e0b; font-weight: 700;">Gold <i class="fas fa-star"></i></div>
+                </div>
+            </div>
+
+            <h6 style="margin-bottom: 15px; color: #333;">Recent Rewards</h6>
+            <div class="reward-item">
+                <div class="reward-info">
+                    <h6>Early Morning Bonus</h6>
+                    <p>6:00 AM - 8:00 AM Sit-in on 2024-02-10</p>
+                </div>
+                <div class="reward-points">+50 pts</div>
+            </div>
+
+            <div class="reward-item">
+                <div class="reward-info">
+                    <h6>Perfect Attendance</h6>
+                    <p>Completed 10 consecutive sit-ins</p>
+                </div>
+                <div class="reward-points">+100 pts</div>
+            </div>
+
+            <div class="reward-item">
+                <div class="reward-info">
+                    <h6>Weekly Challenge</h6>
+                    <p>5 sit-ins in a single week</p>
+                </div>
+                <div class="reward-points">+75 pts</div>
+            </div>
+
+            <div class="reward-item">
+                <div class="reward-info">
+                    <h6>Referral Bonus</h6>
+                    <p>Referred a friend to the system</p>
+                </div>
+                <div class="reward-points">+25 pts</div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" value="@ViewBag.StudentName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" value="student@university.edu">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" placeholder="(+63) 9XX-XXX-XXXX">
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" rows="3">123 Main Street, City</textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Make Reservation Modal -->
+<div class="modal fade" id="makeReservationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-calendar-check"></i> Make Reservation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reservationForm">
+                    <div class="mb-3">
+                        <label for="resDate" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="resDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="resTime" class="form-label">Time</label>
+                        <input type="time" class="form-control" id="resTime" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="resDuration" class="form-label">Duration (Hours)</label>
+                        <select class="form-select" id="resDuration" required>
+                            <option value="">Select duration</option>
+                            <option value="2">2 hours</option>
+                            <option value="3">3 hours</option>
+                            <option value="4">4 hours</option>
+                            <option value="5">5 hours</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="resLab" class="form-label">Lab</label>
+                        <select class="form-select" id="resLab" required>
+                            <option value="">Select lab</option>
+                            <option value="Lab 521">Lab 521</option>
+                            <option value="Lab 522">Lab 522</option>
+                            <option value="Lab 523">Lab 523</option>
+                            <option value="Lab 524">Lab 524</option>
+                            <option value="Lab 525">Lab 525</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="resPurpose" class="form-label">Purpose</label>
+                        <textarea class="form-control" id="resPurpose" rows="3" placeholder="Describe what you'll be working on..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                    <i class="fas fa-check"></i> Make Reservation
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Smooth scroll to sections
+    document.querySelectorAll('.sidebar-menu a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href.startsWith('#')) {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                // Update active menu
+                document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            }
+        });
+    });
+
+    // Set minimum date to today for reservations
+    document.getElementById('resDate').min = new Date().toISOString().split('T')[0];
+</script>

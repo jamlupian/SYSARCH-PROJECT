@@ -1,0 +1,688 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f5f5f5;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 30px 20px;
+        color: white;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+
+    .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 40px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .sidebar-logo i {
+        font-size: 1.8rem;
+    }
+
+    .sidebar-menu {
+        list-style: none;
+    }
+
+    .sidebar-menu li {
+        margin-bottom: 15px;
+    }
+
+    .sidebar-menu a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        padding-left: 20px;
+    }
+
+    .sidebar-menu i {
+        width: 20px;
+        text-align: center;
+    }
+
+    /* ── Header ── */
+    .top-header {
+        position: fixed;
+        top: 0;
+        left: 250px;
+        right: 0;
+        height: 70px;
+        background: white;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        z-index: 999;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-title h1 {
+        font-size: 1.8rem;
+        color: #333;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .btn-logout {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-logout:hover {
+        background-color: #c82333;
+        text-decoration: none;
+        color: white;
+    }
+
+    /* ── Main Content ── */
+    .main-content {
+        margin-left: 250px;
+        margin-top: 70px;
+        padding: 30px;
+        min-height: calc(100vh - 70px);
+    }
+
+    /* ── Stats Cards ── */
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border-left: 5px solid;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-card-1 { border-left-color: #667eea; }
+    .stat-card-2 { border-left-color: #764ba2; }
+    .stat-card-3 { border-left-color: #f093fb; }
+
+    .stat-card h6 {
+        color: #999;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+    }
+
+    .stat-card h2 {
+        color: #333;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    /* ── Cards ── */
+    .content-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 25px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: white;
+        border-bottom: 2px solid #f0f0f0;
+        padding: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .card-header h5 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 25px;
+    }
+
+    /* ── Buttons ── */
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        text-decoration: none;
+        color: white;
+    }
+
+    .btn-primary-action {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .btn-primary-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .btn-success-action {
+        background: #10b981;
+    }
+
+    .btn-success-action:hover {
+        background: #059669;
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    .btn-info-action {
+        background: #0ea5e9;
+    }
+
+    .btn-info-action:hover {
+        background: #0284c7;
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    /* ── Table ── */
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .table-custom {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+    .table-custom thead {
+        background-color: #f8f9fa;
+    }
+
+    .table-custom thead th {
+        color: #666;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 15px;
+        border: none;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .table-custom tbody td {
+        padding: 15px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+    }
+
+    .table-custom tbody tr {
+        transition: background-color 0.3s;
+    }
+
+    .table-custom tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .status-active {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .status-inactive {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .table-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-table-action {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: white;
+    }
+
+    .btn-edit {
+        background-color: #0ea5e9;
+    }
+
+    .btn-edit:hover {
+        background-color: #0284c7;
+    }
+
+    .btn-delete {
+        background-color: #ef4444;
+    }
+
+    .btn-delete:hover {
+        background-color: #dc2626;
+    }
+
+    /* ── Modal ── */
+    .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 10px 12px;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* ── Responsive ── */
+</style>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <i class="fas fa-graduation-cap"></i>
+        <span>CCS Admin</span>
+    </div>
+    <ul class="sidebar-menu">
+        <li><a href="#" class="active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+        <li><a href="#"><i class="fas fa-users"></i> Students</a></li>
+        <li><a href="#"><i class="fas fa-sign-in-alt"></i> Sit-In Records</a></li>
+        <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+        <li><a href="#"><i class="fas fa-file-alt"></i> Reports</a></li>
+        <li><a href="#"><i class="fas fa-clipboard-list"></i> Tasks</a></li>
+        <li><a href="#"><i class="fas fa-comments"></i> Feedback</a></li>
+    </ul>
+</aside>
+
+<!-- Header -->
+<header class="top-header">
+    <div class="header-title">
+        <h1><i class="fas fa-user-shield"></i> Admin Dashboard</h1>
+    </div>
+    <div class="header-actions">
+        <a href="/Student/Index" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Statistics Cards -->
+    <div class="stats-container">
+        <div class="stat-card stat-card-1">
+            <h6>Total Students</h6>
+            <h2 id="totalStudents">0</h2>
+        </div>
+        <div class="stat-card stat-card-2">
+            <h6>Currently Sit-In</h6>
+            <h2 id="currentSitIn">0</h2>
+        </div>
+        <div class="stat-card stat-card-3">
+            <h6>Total Sessions</h6>
+            <h2 id="totalSessions">0</h2>
+        </div>
+    </div>
+
+    <!-- Admin Controls -->
+    <div class="content-card">
+        <div class="card-header">
+            <h5><i class="fas fa-tasks"></i> Quick Actions</h5>
+        </div>
+        <div class="card-body">
+            <button class="btn-action btn-primary-action" data-bs-toggle="modal" data-bs-target="#searchModal">
+                <i class="fas fa-search"></i> Search Students
+            </button>
+            <button class="btn-action btn-success-action" data-bs-toggle="modal" data-bs-target="#sitInModal">
+                <i class="fas fa-sign-in-alt"></i> Create Sit-In
+            </button>
+            <a href="/Student/Register" class="btn-action btn-info-action">
+                <i class="fas fa-user-plus"></i> Register Student
+            </a>
+        </div>
+    </div>
+
+    <!-- Students List -->
+    <div class="content-card">
+        <div class="card-header">
+            <h5><i class="fas fa-table"></i> Students Information</h5>
+            <div>
+                <button class="btn-action btn-info-action" style="margin: 0; padding: 8px 15px; font-size: 0.9rem;">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-wrapper">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>ID Number</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Course</th>
+                            <th>Level</th>
+                            <th>Address</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <tr>
+                            <td colspan="8" style="text-align: center; color: #999; padding: 30px;">
+                                <i class="fas fa-spinner fa-spin"></i> Loading students...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Search Student Modal -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-search"></i> Search Student
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="searchInput" class="form-label">Search by ID or Name</label>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Enter ID Number or Student Name...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="searchBtn">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sit-In Form Modal -->
+<div class="modal fade" id="sitInModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-sign-in-alt"></i> Create Sit-In Record
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="sitInForm">
+                    <div class="mb-3">
+                        <label for="idNumber" class="form-label">ID Number</label>
+                        <input type="text" class="form-control" id="idNumber" placeholder="Enter student ID" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="studentName" class="form-label">Student Name</label>
+                        <input type="text" class="form-control" id="studentName" readonly style="background-color: #f5f5f5;">
+                    </div>
+                    <div class="mb-3">
+                        <label for="purpose" class="form-label">Purpose</label>
+                        <select class="form-control" id="purpose" required>
+                            <option value="">Select Purpose</option>
+                            <option value="Programming">Programming</option>
+                            <option value="Database">Database</option>
+                            <option value="Web Development">Web Development</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="lab" class="form-label">Lab</label>
+                        <input type="text" class="form-control" id="lab" placeholder="e.g., 524">
+                    </div>
+                    <div class="mb-3">
+                        <label for="remainingSession" class="form-label">Remaining Session</label>
+                        <input type="number" class="form-control" id="remainingSession" readonly style="background-color: #f5f5f5;">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="sitInSubmitBtn">
+                    <i class="fas fa-check"></i> Submit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        loadStudents();
+    });
+
+    function loadStudents() {
+        fetch('/Student/GetAllStudents')
+            .then(response => response.json())
+            .then(data => {
+                displayStudents(data);
+                updateStatistics(data);
+            })
+            .catch(error => console.error('Error loading students:', error));
+    }
+
+    function displayStudents(students) {
+        const tableBody = document.getElementById('studentTableBody');
+        tableBody.innerHTML = '';
+
+        if (!students || students.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #999; padding: 30px;">No students found</td></tr>';
+            return;
+        }
+
+        students.forEach(student => {
+            const row = `<tr>
+                <td><strong>${student.idNumber}</strong></td>
+                <td>${student.lastName}, ${student.firstName}</td>
+                <td>${student.email || 'N/A'}</td>
+                <td>${student.course || 'N/A'}</td>
+                <td>${student.courseLevel || 'N/A'}</td>
+                <td>${student.address || 'N/A'}</td>
+                <td><span class="status-badge status-active">Active</span></td>
+                <td>
+                    <div class="table-actions">
+                        <button type="button" class="btn-table-action btn-edit" onclick="editStudent('${student.idNumber}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn-table-action btn-delete" onclick="deleteStudent('${student.idNumber}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    function updateStatistics(students) {
+        document.getElementById('totalStudents').textContent = students ? students.length : 0;
+        document.getElementById('currentSitIn').textContent = '0';
+        document.getElementById('totalSessions').textContent = '0';
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', function () {
+        const searchTerm = document.getElementById('searchInput').value.trim();
+        if (!searchTerm) {
+            alert('Please enter a search term');
+            return;
+        }
+
+        fetch(`/Student/SearchStudent?query=${encodeURIComponent(searchTerm)}`)
+            .then(response => response.json())
+            .then(data => {
+                displayStudents(data);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('searchModal'));
+                modal.hide();
+                document.getElementById('searchInput').value = '';
+            })
+            .catch(error => console.error('Error searching:', error));
+    });
+
+    document.getElementById('idNumber').addEventListener('blur', function () {
+        const idNumber = this.value.trim();
+        if (idNumber) {
+            fetch(`/Student/GetStudentById?id=${encodeURIComponent(idNumber)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.idNumber) {
+                        document.getElementById('studentName').value = `${data.firstName} ${data.lastName}`;
+                        document.getElementById('remainingSession').value = '27';
+                    } else {
+                        alert('Student not found');
+                        document.getElementById('studentName').value = '';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    });
+
+    document.getElementById('sitInSubmitBtn').addEventListener('click', function () {
+        const sitInData = {
+            idNumber: document.getElementById('idNumber').value,
+            purpose: document.getElementById('purpose').value,
+            lab: document.getElementById('lab').value
+        };
+
+        if (!sitInData.idNumber || !sitInData.purpose) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
+        fetch('/Student/CreateSitIn', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(sitInData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Sit-In created successfully');
+                    document.getElementById('sitInForm').reset();
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('sitInModal'));
+                    modal.hide();
+                    loadStudents();
+                } else {
+                    alert('Error: ' + (data.message || 'Unknown error'));
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    function editStudent(idNumber) {
+        alert('Edit functionality for: ' + idNumber);
+    }
+
+    function deleteStudent(idNumber) {
+        if (confirm('Are you sure you want to delete this student?')) {
+            alert('Delete functionality for: ' + idNumber);
+        }
+    }
+</script>
